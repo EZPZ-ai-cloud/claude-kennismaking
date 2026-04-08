@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kennismakingssessie Claude & Cowork</title>
+<style>
+  :root {
+    --blue: #1A5276;
+    --light-blue: #D4E6F1;
+    --medium-blue: #2980B9;
+    --dark: #2C3E50;
+    --grey: #7F8C8D;
+    --light-grey: #F8F9FA;
+    --green: #27AE60;
+    --green-light: #E8F8F5;
+    --orange: #E67E22;
+    --orange-light: #FEF5E7;
+    --red-light: #FDEDEC;
+    --white: #FFFFFF;
+    --radius: 12px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    color: var(--dark);
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f0 100%);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* --- Hero --- */
+  .hero {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--medium-blue) 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  .hero-label { font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.5rem; }
+  .hero h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .hero .subtitle { font-size: 1.1rem; opacity: 0.85; margin-bottom: 1.5rem; }
+  .hero-meta { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; font-size: 0.9rem; opacity: 0.75; }
+
+  /* --- Progress bar --- */
+  .progress-bar-container {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--white);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    padding: 0.6rem 2rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .progress-bar-track {
+    flex: 1; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), #2ecc71);
+    border-radius: 4px; transition: width 0.5s ease;
+  }
+  .progress-text { font-size: 0.85rem; color: var(--grey); min-width: 3rem; text-align: right; }
+
+  /* --- Container --- */
+  .container { max-width: 800px; margin: 0 auto; padding: 1.5rem; }
+
+  /* --- Timeline --- */
+  .timeline {
+    background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 1.5rem; margin-bottom: 1.5rem;
+  }
+  .timeline h2 { font-size: 1.1rem; color: var(--blue); margin-bottom: 1rem; }
+  .timeline-grid { display: grid; grid-template-columns: auto auto 1fr auto; gap: 0.4rem 1rem; align-items: center; font-size: 0.88rem; }
+  .timeline-time { font-weight: 600; color: var(--blue); }
+  .timeline-dur { color: var(--grey); }
+  .timeline-topic { font-weight: 500; }
+  .timeline-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--medium-blue); }
+  .timeline-row-pause .timeline-topic { color: var(--grey); font-style: italic; }
+
+  /* --- Block card --- */
+  .block {
+    background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow);
+    margin-bottom: 1.5rem; overflow: hidden;
+    border-left: 4px solid var(--medium-blue);
+  }
+  .block-header {
+    padding: 1.2rem 1.5rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none;
+  }
+  .block-header:hover { background: var(--light-grey); }
+  .block-header h2 { font-size: 1.15rem; color: var(--blue); display: flex; align-items: center; gap: 0.5rem; }
+  .block-number {
+    background: var(--medium-blue); color: white; width: 28px; height: 28px;
+    border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+  }
+  .block-number.pause { background: var(--grey); }
+  .block-chevron { font-size: 1.2rem; color: var(--grey); transition: transform 0.3s; }
+  .block.open .block-chevron { transform: rotate(180deg); }
+  .block-body { padding: 0 1.5rem 1.5rem; display: none; }
+  .block.open .block-body { display: block; }
+  .block-done { opacity: 0.6; border-left-color: var(--green); }
+  .block-done .block-number { background: var(--green); }
+
+  /* --- Content elements --- */
+  h3 { font-size: 1rem; color: var(--dark); margin: 1.2rem 0 0.5rem; font-weight: 600; }
+  p { margin-bottom: 0.6rem; font-size: 0.95rem; }
+
+  /* Checklist */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;
+    font-size: 0.93rem;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist input[type="checkbox"] {
+    width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0;
+    accent-color: var(--green); cursor: pointer;
+  }
+  .checklist label { cursor: pointer; flex: 1; }
+  .checklist .checked { text-decoration: line-through; color: var(--grey); }
+
+  /* Steps */
+  .steps { list-style: none; padding: 0; counter-reset: step; }
+  .steps li {
+    display: flex; align-items: flex-start; gap: 0.7rem;
+    padding: 0.4rem 0; font-size: 0.93rem;
+  }
+  .steps li::before {
+    counter-increment: step; content: counter(step);
+    background: var(--light-blue); color: var(--blue);
+    width: 24px; height: 24px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.78rem; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* Boxes */
+  .tip, .warning, .example {
+    border-radius: 8px; padding: 0.8rem 1rem; margin: 0.8rem 0; font-size: 0.9rem;
+  }
+  .tip { background: var(--green-light); border-left: 4px solid var(--green); }
+  .warning { background: var(--orange-light); border-left: 4px solid var(--orange); }
+  .example { background: var(--light-blue); border-left: 4px solid var(--medium-blue); }
+  .tip strong { color: var(--green); }
+  .warning strong { color: var(--orange); }
+  .example strong { color: var(--blue); }
+
+  /* Prompt example */
+  .prompt {
+    background: #1e1e1e; color: #d4d4d4; border-radius: 8px;
+    padding: 0.8rem 1rem; font-family: 'SF Mono', 'Consolas', monospace;
+    font-size: 0.85rem; margin: 0.6rem 0; white-space: pre-wrap; line-height: 1.5;
+  }
+
+  /* Data table */
+  .data-table { width: 100%; border-collapse: collapse; margin: 0.6rem 0; font-size: 0.9rem; }
+  .data-table th { background: var(--light-blue); color: var(--blue); text-align: left; padding: 0.5rem 0.8rem; font-weight: 600; }
+  .data-table td { padding: 0.4rem 0.8rem; border-bottom: 1px solid #eee; }
+
+  /* --- Quiz --- */
+  .quiz {
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+    border-radius: 8px; padding: 1rem 1.2rem; margin-top: 1.2rem;
+    border: 1px solid #c8d6f0;
+  }
+  .quiz-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--medium-blue); font-weight: 700; margin-bottom: 0.5rem; }
+  .quiz p { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.6rem; }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.4rem; }
+  .quiz-option {
+    padding: 0.6rem 1rem; border-radius: 8px; border: 2px solid #c8d6f0;
+    background: white; cursor: pointer; font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  .quiz-option:hover { border-color: var(--medium-blue); background: #f0f4ff; }
+  .quiz-option.correct { border-color: var(--green); background: var(--green-light); }
+  .quiz-option.wrong { border-color: #e74c3c; background: var(--red-light); }
+  .quiz-option.disabled { pointer-events: none; opacity: 0.7; }
+  .quiz-option.correct.disabled, .quiz-option.wrong.disabled { opacity: 1; }
+  .quiz-feedback { margin-top: 0.5rem; font-size: 0.88rem; display: none; padding: 0.5rem; border-radius: 6px; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: var(--green-light); color: #1a7a3a; }
+  .quiz-feedback.wrong-fb { background: var(--red-light); color: #c0392b; }
+
+  /* --- Links section --- */
+  .links { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .link-card {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.8rem; border-radius: 8px; background: var(--light-grey);
+    text-decoration: none; color: var(--dark); font-size: 0.88rem;
+    transition: background 0.2s;
+  }
+  .link-card:hover { background: var(--light-blue); }
+  .link-icon { font-size: 1.1rem; }
+
+  /* --- Footer --- */
+  .footer { text-align: center; padding: 2rem; color: var(--grey); font-size: 0.8rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.6rem; }
+    .links { grid-template-columns: 1fr; }
+    .timeline-grid { font-size: 0.8rem; gap: 0.3rem 0.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Draaiboek</div>
+  <h1>Kennismakingssessie Claude & Cowork</h1>
+  <div class="subtitle">voor belastingadviseurs</div>
+  <div class="hero-meta">
+    <span>18 april 2026</span>
+    <span>circa 2 uur</span>
+    <span>beginner tot gemiddeld</span>
+  </div>
+</div>
+
+<div class="progress-bar-container">
+  <span style="font-size:0.85rem;font-weight:600;color:var(--blue);">Voortgang</span>
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+  <span class="progress-text" id="progressText">0%</span>
+</div>
+
+<div class="container">
+
+  <!-- Timeline overview -->
+  <div class="timeline">
+    <h2>Overzicht</h2>
+    <div class="timeline-grid">
+      <span class="timeline-time">0:00</span><span class="timeline-dot"></span><span class="timeline-topic">Welkom & Guest Pass</span><span class="timeline-dur">20 min</span>
+      <span class="timeline-time">0:20</span><span class="timeline-dot"></span><span class="timeline-topic">Wat is Claude?</span><span class="timeline-dur">15 min</span>
+      <span class="timeline-time">0:35</span><span class="timeline-dot"></span><span class="timeline-topic">Privacy & beveiliging</span><span class="timeline-dur">15 min</span>
+      <span class="timeline-time">0:50</span><span class="timeline-dot" style="background:var(--grey)"></span><span class="timeline-topic timeline-row-pause" style="color:var(--grey);font-style:italic">Pauze</span><span class="timeline-dur">10 min</span>
+      <span class="timeline-time">1:00</span><span class="timeline-dot"></span><span class="timeline-topic">Rondleiding & kernbegrippen</span><span class="timeline-dur">20 min</span>
+      <span class="timeline-time">1:20</span><span class="timeline-dot"></span><span class="timeline-topic">Claude in Excel</span><span class="timeline-dur">15 min</span>
+      <span class="timeline-time">1:35</span><span class="timeline-dot"></span><span class="timeline-topic">Hands-on fiscale oefening</span><span class="timeline-dur">20 min</span>
+      <span class="timeline-time">1:55</span><span class="timeline-dot"></span><span class="timeline-topic">Afsluiting</span><span class="timeline-dur">5 min</span>
+    </div>
+  </div>
+
+  <!-- ===================== BLOK 1 ===================== -->
+  <div class="block open" id="block1">
+    <div class="block-header" onclick="toggleBlock('block1')">
+      <h2><span class="block-number">1</span> Welkom & Guest Pass activeren <small style="color:var(--grey);font-weight:400;margin-left:0.3rem;">(20 min)</small></h2>
+      <span class="block-chevron">&#9660;</span>
+    </div>
+    <div class="block-body">
+      <h3>Guest Pass activeren</h3>
+      <ul class="checklist" data-block="1">
+        <li><input type="checkbox" id="c1a"><label for="c1a">Vriend opent de Guest Pass-link die je via Messages hebt gestuurd</label></li>
+        <li><input type="checkbox" id="c1b"><label for="c1b">Account aanmaken (e-mailadres of Google-account)</label></li>
+        <li><input type="checkbox" id="c1c"><label for="c1c">Gratis week Cowork is geactiveerd (alle Pro-functies beschikbaar)</label></li>
+      </ul>
+
+      <h3>Claude Desktop installeren</h3>
+      <ul class="checklist" data-block="1">
+        <li><input type="checkbox" id="c1d"><label for="c1d">Ga naar <strong>claude.ai/download</strong> en kies de juiste Windows-versie</label></li>
+        <li><input type="checkbox" id="c1e"><label for="c1e">Download en installeer</label></li>
+        <li><input type="checkbox" id="c1f"><label for="c1f">Open Claude Desktop en log in met het nieuwe account</label></li>
+      </ul>
+
+      <div class="warning"><strong>Let op:</strong> Download altijd via claude.ai/download. Versies in de Microsoft Store ondersteunen geen Cowork.</div>
+
+      <h3>Check: werkt alles?</h3>
+      <div class="prompt">Kun je in 3 zinnen uitleggen wat de vermogensrendementsheffing in Nederland inhoudt?</div>
+      <ul class="checklist" data-block="1">
+        <li><input type="checkbox" id="c1g"><label for="c1g">Claude geeft een helder antwoord &mdash; installatie geslaagd!</label></li>
+      </ul>
+
+      <div class="quiz" data-quiz="q1">
+        <div class="quiz-label">Quizvraag</div>
+        <p>Hoe lang geeft de Guest Pass toegang tot Pro-functies?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkQuiz(this, false)">48 uur</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">1 week</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">1 maand</div>
+        </div>
+        <div class="quiz-feedback correct-fb">Precies! Een Guest Pass geeft een volledige week Pro-toegang, inclusief Cowork en Claude in Excel.</div>
+        <div class="quiz-feedback wrong-fb">Niet helemaal &mdash; een Guest Pass geeft precies 1 week Pro-toegang.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BLOK 2 ===================== -->
+  <div class="block" id="block2">
+    <div class="block-header" onclick="toggleBlock('block2')">
+      <h2><span class="block-number">2</span> Wat is Claude? <small style="color:var(--grey);font-weight:400;margin-left:0.3rem;">(15 min)</small></h2>
+      <span class="block-chevron">&#9660;</span>
+    </div>
+    <div class="block-body">
+      <h3>Bespreek</h3>
+      <ul class="checklist" data-block="2">
+        <li><input type="checkbox" id="c2a"><label for="c2a"><strong>Wat is Claude?</strong> Een AI-assistent van Anthropic. Geen zoekmachine, maar een gesprekspartner die kan redeneren, analyseren, documenten verwerken en teksten schrijven.</label></li>
+        <li><input type="checkbox" id="c2b"><label for="c2b"><strong>Verschil met ChatGPT:</strong> Claude staat bekend om genuanceerde antwoorden en een groot contextvenster (200K tokens). Handig voor het analyseren van grote documenten.</label></li>
+        <li><input type="checkbox" id="c2c"><label for="c2c"><strong>Relevantie voor belastingadvies:</strong> Samenvatten van fiscale regelgeving, doorrekenen van scenario's, opstellen van cli&euml;ntbrieven, werken met spreadsheets.</label></li>
+      </ul>
+
+      <div class="tip"><strong>Demo:</strong> Stel Claude een fiscale vraag zodat je vriend direct de kracht ziet.</div>
+      <div class="prompt">Wat zijn de belangrijkste wijzigingen in Box 3 voor 2026?</div>
+
+      <div class="quiz" data-quiz="q2">
+        <div class="quiz-label">Quizvraag</div>
+        <p>Hoeveel tokens kan Claude in &eacute;&eacute;n keer verwerken (contextvenster)?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkQuiz(this, false)">32K tokens</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">128K tokens</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">200K tokens</div>
+        </div>
+        <div class="quiz-feedback correct-fb">Klopt! 200K tokens komt overeen met ruwweg 500 pagina's tekst &mdash; genoeg voor een compleet belastingdossier.</div>
+        <div class="quiz-feedback wrong-fb">Niet helemaal &mdash; Claude heeft een contextvenster van 200K tokens, goed voor ca. 500 pagina's.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BLOK 3 ===================== -->
+  <div class="block" id="block3">
+    <div class="block-header" onclick="toggleBlock('block3')">
+      <h2><span class="block-number">3</span> Privacy & beveiliging <small style="color:var(--grey);font-weight:400;margin-left:0.3rem;">(15 min)</small></h2>
+      <span class="block-chevron">&#9660;</span>
+    </div>
+    <div class="block-body">
+      <h3>A. Opt-out modeltraining</h3>
+      <p>Anthropic gebruikt standaard gesprekken van consumentenaccounts voor modeltraining. Uitschakelen:</p>
+      <ul class="checklist" data-block="3">
+        <li><input type="checkbox" id="c3a"><label for="c3a">Open Settings via het profielicoon (linksonder)</label></li>
+        <li><input type="checkbox" id="c3b"><label for="c3b">Ga naar <strong>Privacy</strong></label></li>
+        <li><input type="checkbox" id="c3c"><label for="c3c">Zet <strong>&ldquo;Help improve Claude&rdquo;</strong> op <strong>uit</strong></label></li>
+      </ul>
+      <div class="warning"><strong>Belangrijk:</strong> Met opt-out bewaart Anthropic je data maximaal 30 dagen (i.p.v. 5 jaar). Eerder gevoerde gesprekken kunnen al in trainingsdata zijn opgenomen.</div>
+      <div class="warning"><strong>Geen duimpjes!</strong> Geef geen feedback via de duimpje-omhoog/omlaag-knoppen. Zodra je feedback geeft, wordt die sessie 5 jaar bewaard &mdash; ook met opt-out ingesteld.</div>
+
+      <h3>B. Incognito chats</h3>
+      <p>Via het spookje-icoon start je een incognito chat: niet opgeslagen in je geschiedenis, niet gebruikt voor training, niet opgenomen in Claude's geheugen. Wel bewaard Anthropic de sessie minimaal 30 dagen.</p>
+      <ul class="checklist" data-block="3">
+        <li><input type="checkbox" id="c3d"><label for="c3d"><strong>Alleen losse chats:</strong> incognito is niet beschikbaar in Projecten of Cowork</label></li>
+        <li><input type="checkbox" id="c3e"><label for="c3e"><strong>Eenmalig:</strong> niet te heropenen of om te zetten naar een normale chat</label></li>
+      </ul>
+
+      <h3>C. Waarom geen BSN of persoonsgegevens invoeren?</h3>
+      <p>Hoewel Anthropic beveiligingsmaatregelen treft (AES-256 encryptie, TLS, beperkte toegang), blijven er risico's:</p>
+      <ul class="checklist" data-block="3">
+        <li><input type="checkbox" id="c3f"><label for="c3f"><strong>Dataretentie:</strong> gesprekken worden 30 dagen tot 5 jaar bewaard; het Trust &amp; Safety-team kan ze inzien bij vermoedens van misbruik</label></li>
+        <li><input type="checkbox" id="c3g"><label for="c3g"><strong>Trainingsdata:</strong> zonder opt-out kunnen gesprekken in toekomstige modellen terechtkomen</label></li>
+        <li><input type="checkbox" id="c3h"><label for="c3h"><strong>Verwerking buiten de EU:</strong> Anthropic is Amerikaans; doorgifte via SCCs, maar bescherming minder sterk dan onder AVG</label></li>
+        <li><input type="checkbox" id="c3i"><label for="c3i"><strong>Beroepsgeheim:</strong> herleidbare cli&euml;ntgegevens bij een derde partij kan conflicteren met je geheimhoudingsplicht</label></li>
+      </ul>
+
+      <h3>D. Mitigerende maatregelen</h3>
+      <ul class="checklist" data-block="3">
+        <li><input type="checkbox" id="c3j"><label for="c3j"><strong>Anonimiseer altijd:</strong> &ldquo;Cli&euml;nt A heeft &euro;120.000 spaargeld&rdquo; werkt net zo goed als het echte gegeven</label></li>
+        <li><input type="checkbox" id="c3k"><label for="c3k"><strong>Opt-out modeltraining</strong> (stap A) &mdash; reduceert retentie naar 30 dagen</label></li>
+        <li><input type="checkbox" id="c3l"><label for="c3l"><strong>Incognito chat</strong> (stap B) voor eenmalige vragen</label></li>
+        <li><input type="checkbox" id="c3m"><label for="c3m"><strong>Gesprekken wissen:</strong> verwijder via de zijbalk na gevoelige inhoud</label></li>
+        <li><input type="checkbox" id="c3n"><label for="c3n"><strong>Overweeg Team/Enterprise:</strong> contractueel uitgezonderd van training, met DPA</label></li>
+      </ul>
+
+      <div class="quiz" data-quiz="q3">
+        <div class="quiz-label">Quizvraag</div>
+        <p>Hoe lang bewaart Anthropic je data als je opt-out hebt ingesteld &eacute;n geen feedback geeft?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkQuiz(this, false)">7 dagen</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">30 dagen</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">1 jaar</div>
+        </div>
+        <div class="quiz-feedback correct-fb">Correct! Met opt-out worden gesprekken maximaal 30 dagen bewaard. Maar let op: geef je feedback via duimpjes, dan wordt die sessie 5 jaar bewaard.</div>
+        <div class="quiz-feedback wrong-fb">Niet helemaal &mdash; met opt-out is de retentie maximaal 30 dagen (tenzij je feedback geeft via duimpjes, dan 5 jaar).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PAUZE ===================== -->
+  <div class="block" id="blockPause" style="border-left-color: var(--grey);">
+    <div class="block-header" onclick="toggleBlock('blockPause')">
+      <h2><span class="block-number pause">&#9749;</span> Pauze <small style="color:var(--grey);font-weight:400;margin-left:0.3rem;">(10 min)</small></h2>
+      <span class="block-chevron">&#9660;</span>
+    </div>
+    <div class="block-body">
+      <p>Koffie, thee, en eventuele vragen uit de eerste drie blokken.</p>
+      <ul class="checklist" data-block="pause">
+        <li><input type="checkbox" id="cpause"><label for="cpause">Pauze gehad, klaar voor deel 2!</label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===================== BLOK 4 ===================== -->
+  <div class="block" id="block4">
+    <div class="block-header" onclick="toggleBlock('block4')">
+      <h2><span class="block-number">4</span> Rondleiding & kernbegrippen <small style="color:var(--grey);font-weight:400;margin-left:0.3rem;">(20 min)</small></h2>
+      <span class="block-chevron">&#9660;</span>
+    </div>
+    <div class="block-body">
+
+      <h3>A. Projecten</h3>
+      <p><strong>Projecten</strong> zijn werkruimtes waarin je gesprekken, documenten en instructies bundelt rond een specifiek onderwerp &mdash; een digitaal dossier.</p>
+      <ul class="checklist" data-block="4">
+        <li><input type="checkbox" id="c4a"><label for="c4a"><strong>Kennisbank:</strong> upload bestanden (PDF, Word, CSV, tot 30 MB) die Claude meeneemt in elk gesprek binnen dat project</label></li>
+        <li><input type="checkbox" id="c4b"><label for="c4b"><strong>Projectinstructies:</strong> bijv. &ldquo;Je bent een Nederlandse belastingadviseur. Antwoord altijd in het Nederlands en verwijs naar actuele wetgeving.&rdquo;</label></li>
+        <li><input type="checkbox" id="c4c"><label for="c4c"><strong>Oefening:</strong> maak samen een project &ldquo;Box 3 Advies 2026&rdquo;</label></li>
+      </ul>
+
+      <h3>B. Skills</h3>
+      <p><strong>Skills</strong> zijn herbruikbare instructies die Claude automatisch toepast wanneer een taak eraan matcht &mdash; een soort specialisatie.</p>
+      <ul class="checklist" data-block="4">
+        <li><input type="checkbox" id="c4d"><label for="c4d">Meer dan 1.000 kant-en-klare skills beschikbaar</label></li>
+        <li><input type="checkbox" id="c4e"><label for="c4e">Zelf skills maken met de ingebouwde skill-creator</label></li>
+        <li><input type="checkbox" id="c4f"><label for="c4f">Skills worden gebundeld in <strong>Plugins</strong> &mdash; pakketten voor een specifiek vakgebied</label></li>
+      </ul>
+      <div class="example"><strong>Voorbeeld &mdash; aangifte-ib-beleggingen:</strong> Deze skill helpt bij het invullen van Box 3 van de aangifte inkomstenbelasting. Upload een jaaroverzicht van je broker (Saxo, DeGiro, IBKR, Fidelity, Lynx, Binck, etc.) en de skill analyseert de PDF of het Excel-bestand, splitst de rekening in banktegoeden en beleggingen, berekent de peildatumwaarden, en levert een overzicht met precies de velden die je nodig hebt voor de aangifte.</div>
+
+      <h3>C. Cowork</h3>
+      <p><strong>Cowork</strong> is een modus waarmee Claude actief bestanden kan lezen, maken en bewerken op je computer:</p>
+      <ul class="checklist" data-block="4">
+        <li><input type="checkbox" id="c4g"><label for="c4g">Word, Excel en PDF's aanmaken en bewerken</label></li>
+        <li><input type="checkbox" id="c4h"><label for="c4h">Code uitvoeren en data analyseren</label></li>
+        <li><input type="checkbox" id="c4i"><label for="c4i">Taken plannen en automatiseren (scheduled tasks)</label></li>
+        <li><input type="checkbox" id="c4j"><label for="c4j">Samenwerken met externe tools via connectoren (MCP)</label></li>
+      </ul>
+
+      <h3>D. Best practices voor prompting</h3>
+      <ul class="checklist" data-block="4">
+        <li><input type="checkbox" id="c4k"><label for="c4k"><strong>Wees specifiek:</strong> &ldquo;Bereken de Box 3-heffing voor een alleenstaande met &euro;150.000 spaargeld&rdquo; is beter dan &ldquo;Hoe werkt Box 3?&rdquo;</label></li>
+        <li><input type="checkbox" id="c4l"><label for="c4l"><strong>Geef context:</strong> vertel Claude je rol en voor wie het antwoord bedoeld is</label></li>
+        <li><input type="checkbox" id="c4m"><label for="c4m"><strong>Vraag om formaat:</strong> &ldquo;Geef het antwoord als tabel met categorie, bedrag en percentage&rdquo;</label></li>
+        <li><input type="checkbox" id="c4n"><label for="c4n"><strong>Controleer altijd:</strong> Claude is een hulpmiddel, geen vervanging voor professioneel oordeel</label></li>
+      </ul>
+
+      <h3>E. Betrouwbaarheid & verificatie</h3>
+      <p>Claude kan fouten maken (&ldquo;hallucineren&rdquo;): plausibel klinkende antwoorden die feitelijk onjuist zijn. Risico is het grootst bij cijfers, tarieven en wetsartikelen. Technieken om dit te beperken:</p>
+      <ul class="checklist" data-block="4">
+        <li><input type="checkbox" id="c4o"><label for="c4o"><strong>Vraag om bronvermelding:</strong> &ldquo;Citeer de wetsartikelen en geef de bron bij elk cijfer.&rdquo; Geen bron = extra controleren.</label></li>
+        <li><input type="checkbox" id="c4p"><label for="c4p"><strong>Dwing twijfel af:</strong> &ldquo;Als je het niet zeker weet, zeg dat dan.&rdquo;</label></li>
+        <li><input type="checkbox" id="c4q"><label for="c4q"><strong>Laat Claude zichzelf controleren:</strong> &ldquo;Controleer je eigen antwoord: klopt elke stap?&rdquo;</label></li>
+        <li><input type="checkbox" id="c4r"><label for="c4r"><strong>Stel dezelfde vraag twee keer:</strong> afwijkende antwoorden = extra verificatie nodig</label></li>
+        <li><input type="checkbox" id="c4s"><label for="c4s"><strong>Werk vanuit documenten:</strong> upload de brontekst en laat Claude letterlijk citeren</label></li>
+      </ul>
+      <div class="warning"><strong>Vuistregel:</strong> Gebruik Claude nooit als enige bron voor advies aan cli&euml;nten. Controleer cijfers en wetsverwijzingen tegen offici&euml;le bronnen (belastingdienst.nl, wetten.overheid.nl).</div>
+
+      <div class="quiz" data-quiz="q4">
+        <div class="quiz-label">Quizvraag</div>
+        <p>Welke techniek verkleint de kans op hallucinaties het meest?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Claude vragen om langer na te denken</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">Een brontekst uploaden en Claude daaruit laten citeren</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Altijd het nieuwste model gebruiken</div>
+        </div>
+        <div class="quiz-feedback correct-fb">Juist! Door Claude te laten werken vanuit een ge&uuml;pload document en letterlijk te laten citeren, wordt het antwoord verankerd in de brontekst.</div>
+        <div class="quiz-feedback wrong-fb">Niet helemaal &mdash; het uploaden van een brontekst en Claude daaruit laten citeren is het meest effectief tegen hallucinaties.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BLOK 5 ===================== -->
+  <div class="block" id="block5">
+    <div class="block-header" onclick="toggleBlock('block5')">
+      <h2><span class="block-number">5</span> Claude in Excel <small style="color:var(--grey);font-weight:400;margin-left:0.3rem;">(15 min)</small></h2>
+      <span class="block-chevron">&#9660;</span>
+    </div>
+    <div class="block-body">
+      <h3>Installatie</h3>
+      <ul class="checklist" data-block="5">
+        <li><input type="checkbox" id="c5a"><label for="c5a">Open Excel (2016+) &rarr; tabblad <strong>Invoegen</strong> &rarr; <strong>Invoegtoepassingen ophalen</strong></label></li>
+        <li><input type="checkbox" id="c5b"><label for="c5b">Zoek op &ldquo;Claude by Anthropic&rdquo; en klik <strong>Toevoegen</strong></label></li>
+        <li><input type="checkbox" id="c5c"><label for="c5c">Log in met je Claude-account</label></li>
+      </ul>
+
+      <h3>Wat kun je ermee?</h3>
+      <ul class="checklist" data-block="5">
+        <li><input type="checkbox" id="c5d"><label for="c5d"><strong>Formules in natuurlijke taal:</strong> &ldquo;Maak een VERT.ZOEKEN die het tarief opzoekt bij een inkomen&rdquo;</label></li>
+        <li><input type="checkbox" id="c5e"><label for="c5e"><strong>Data analyseren:</strong> selecteer een bereik, vraag om trends of afwijkingen</label></li>
+        <li><input type="checkbox" id="c5f"><label for="c5f"><strong>Tekst genereren:</strong> samenvattingen, cli&euml;ntnotities, toelichtingen in cellen</label></li>
+      </ul>
+
+      <h3>Oefening: probeer het zelf</h3>
+      <p>Maak een werkblad met fictieve vermogens van een cli&euml;nt en laat Claude:</p>
+      <ul class="checklist" data-block="5">
+        <li><input type="checkbox" id="c5g"><label for="c5g">Een formule schrijven voor het belastbaar rendement (forfaitaire percentages)</label></li>
+        <li><input type="checkbox" id="c5h"><label for="c5h">Een samenvatting genereren van de uitkomsten</label></li>
+        <li><input type="checkbox" id="c5i"><label for="c5i">Een suggestie doen voor belastingoptimalisatie</label></li>
+      </ul>
+
+      <div class="quiz" data-quiz="q5">
+        <div class="quiz-label">Quizvraag</div>
+        <p>Waar vind je de Claude-plugin in Excel?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Tabblad Gegevens &rarr; Verbindingen</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">Tabblad Invoegen &rarr; Invoegtoepassingen ophalen</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Tabblad Controleren &rarr; Add-ins</div>
+        </div>
+        <div class="quiz-feedback correct-fb">Goed zo! Via Invoegen &rarr; Invoegtoepassingen ophalen vind je de Office Store waar je &ldquo;Claude by Anthropic&rdquo; kunt installeren.</div>
+        <div class="quiz-feedback wrong-fb">De Excel-plugin installeer je via <strong>Invoegen &rarr; Invoegtoepassingen ophalen</strong> in het lint.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BLOK 6 ===================== -->
+  <div class="block" id="block6">
+    <div class="block-header" onclick="toggleBlock('block6')">
+      <h2><span class="block-number">6</span> Hands-on fiscale oefening <small style="color:var(--grey);font-weight:400;margin-left:0.3rem;">(20 min)</small></h2>
+      <span class="block-chevron">&#9660;</span>
+    </div>
+    <div class="block-body">
+
+      <h3>Oefening 1: Box 3 berekening</h3>
+      <table class="data-table">
+        <tr><th>Gegeven</th><th>Waarde</th></tr>
+        <tr><td>Burgerlijke staat</td><td>Alleenstaand</td></tr>
+        <tr><td>Spaargeld</td><td>&euro; 120.000</td></tr>
+        <tr><td>Beleggingen</td><td>&euro; 80.000</td></tr>
+        <tr><td>Schulden (box 3)</td><td>&euro; 15.000</td></tr>
+        <tr><td>Peildatum</td><td>1 januari 2026</td></tr>
+      </table>
+      <div class="prompt">Ik ben een Nederlandse belastingadviseur. Bereken de Box 3-heffing voor 2026 voor een alleenstaande cli&euml;nt met &euro;120.000 spaargeld, &euro;80.000 in beleggingen en &euro;15.000 schulden. Geef de berekening stapsgewijs weer, inclusief het heffingsvrij vermogen, de forfaitaire rendementen per categorie en de uiteindelijke belasting.</div>
+      <ul class="checklist" data-block="6">
+        <li><input type="checkbox" id="c6a"><label for="c6a">Box 3 berekening uitgevoerd en besproken</label></li>
+      </ul>
+
+      <h3>Oefening 2: cli&euml;ntbrief opstellen</h3>
+      <div class="prompt">Stel een beknopte brief op aan de cli&euml;nt waarin je de Box 3-berekening toelicht. Gebruik een professionele maar toegankelijke toon. Vermeld het totaalbedrag aan belasting en geef een korte toelichting op de berekening.</div>
+      <ul class="checklist" data-block="6">
+        <li><input type="checkbox" id="c6b"><label for="c6b">Cli&euml;ntbrief gegenereerd en beoordeeld</label></li>
+      </ul>
+
+      <h3>Oefening 3: regelgeving opzoeken</h3>
+      <div class="prompt">Wat zijn de belangrijkste wijzigingen in de inkomstenbelasting voor 2026 ten opzichte van 2025? Focus op Box 1 en Box 3.</div>
+      <ul class="checklist" data-block="6">
+        <li><input type="checkbox" id="c6c"><label for="c6c">Regelgeving opgezocht en gecontroleerd tegen offici&euml;le bronnen</label></li>
+      </ul>
+
+      <div class="warning"><strong>Let op:</strong> Claude kan fouten maken bij specifieke cijfers en tarieven. Controleer altijd tegen offici&euml;le bronnen (belastingdienst.nl, wetten.overheid.nl).</div>
+
+      <div class="quiz" data-quiz="q6">
+        <div class="quiz-label">Quizvraag</div>
+        <p>Je cli&euml;nt vraagt je om zijn aangifte via Claude te laten invullen met echte BSN en bedragen. Wat doe je?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Prima, Claude versleutelt alles toch</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Alleen als je incognito chat gebruikt</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">Anonimiseren: fictieve namen en bedragen gebruiken, daarna zelf de echte data invullen</div>
+        </div>
+        <div class="quiz-feedback correct-fb">Precies! Altijd anonimiseren. Gebruik Claude voor de berekening en structuur, vul daarna zelf de echte gegevens in.</div>
+        <div class="quiz-feedback wrong-fb">Echte persoonsgegevens horen niet in Claude &mdash; ook niet in incognito. Anonimiseer altijd en vul de echte data zelf in.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== BLOK 7 ===================== -->
+  <div class="block" id="block7">
+    <div class="block-header" onclick="toggleBlock('block7')">
+      <h2><span class="block-number">7</span> Afsluiting & vervolgstappen <small style="color:var(--grey);font-weight:400;margin-left:0.3rem;">(5 min)</small></h2>
+      <span class="block-chevron">&#9660;</span>
+    </div>
+    <div class="block-body">
+
+      <h3>Checklist</h3>
+      <ul class="checklist" data-block="7">
+        <li><input type="checkbox" id="c7a"><label for="c7a">Claude Desktop ge&iuml;nstalleerd via claude.ai/download</label></li>
+        <li><input type="checkbox" id="c7b"><label for="c7b">&ldquo;Help improve Claude&rdquo; uitgeschakeld</label></li>
+        <li><input type="checkbox" id="c7c"><label for="c7c">Eerste Project aangemaakt</label></li>
+        <li><input type="checkbox" id="c7d"><label for="c7d">Claude in Excel ge&iuml;nstalleerd</label></li>
+        <li><input type="checkbox" id="c7e"><label for="c7e">Eerste fiscale berekening gedaan</label></li>
+      </ul>
+
+      <h3>Tips om verder te leren</h3>
+      <ul class="checklist" data-block="7">
+        <li><input type="checkbox" id="c7f"><label for="c7f">Experimenteer dagelijks met kleine taken: brief, berekening, samenvatting</label></li>
+        <li><input type="checkbox" id="c7g"><label for="c7g">Bouw Projecten uit met vaste instructies en relevante documenten</label></li>
+        <li><input type="checkbox" id="c7h"><label for="c7h">Bekijk de Anthropic-cursus op anthropic.skilljar.com</label></li>
+        <li><input type="checkbox" id="c7i"><label for="c7i">Ontdek skills en plugins via de Cowork Skills Directory</label></li>
+        <li><input type="checkbox" id="c7j"><label for="c7j">Overweeg Team-plan voor samenwerking (automatische opt-out training)</label></li>
+      </ul>
+
+      <h3>Handige links</h3>
+      <div class="links">
+        <a href="https://claude.ai/download" target="_blank" class="link-card"><span class="link-icon">&#11015;</span> claude.ai/download</a>
+        <a href="https://support.claude.com" target="_blank" class="link-card"><span class="link-icon">&#10067;</span> Help Center</a>
+        <a href="https://privacy.claude.com" target="_blank" class="link-card"><span class="link-icon">&#128274;</span> Privacy Center</a>
+        <a href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" class="link-card"><span class="link-icon">&#128218;</span> Prompting Guide</a>
+        <a href="https://anthropic.skilljar.com/introduction-to-claude-cowork" target="_blank" class="link-card"><span class="link-icon">&#127891;</span> Intro to Cowork</a>
+        <a href="https://belastingdienst.nl" target="_blank" class="link-card"><span class="link-icon">&#127475;&#127473;</span> Belastingdienst</a>
+      </div>
+
+      <div class="quiz" data-quiz="q7">
+        <div class="quiz-label">Laatste vraag</div>
+        <p>Wat is het allerbelangrijkste om te onthouden bij het gebruik van Claude als belastingadviseur?</p>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Altijd het nieuwste model gebruiken</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Zo veel mogelijk context geven</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">Altijd zelf controleren &mdash; Claude is een hulpmiddel, geen vervanging voor professioneel oordeel</div>
+        </div>
+        <div class="quiz-feedback correct-fb">Precies. Claude is een krachtig hulpmiddel, maar jij bent en blijft de expert. Altijd zelf verifi&euml;ren!</div>
+        <div class="quiz-feedback wrong-fb">Belangrijk, maar het allerbelangrijkste: altijd zelf controleren. Claude is een hulpmiddel, geen vervanging voor professioneel oordeel.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Opgesteld met behulp van Claude (Anthropic) &middot; 18 april 2026
+</div>
+
+<script>
+  // --- Toggle blocks ---
+  function toggleBlock(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
+
+  // --- Quiz logic ---
+  function checkQuiz(el, isCorrect) {
+    const quiz = el.closest('.quiz');
+    const options = quiz.querySelectorAll('.quiz-option');
+    options.forEach(o => {
+      o.classList.add('disabled');
+      if (o === el) o.classList.add(isCorrect ? 'correct' : 'wrong');
+    });
+    // highlight correct if user was wrong
+    if (!isCorrect) {
+      options.forEach(o => {
+        if (o.getAttribute('onclick').includes('true')) o.classList.add('correct');
+      });
+    }
+    const fb = quiz.querySelectorAll('.quiz-feedback');
+    fb.forEach(f => {
+      if (isCorrect && f.classList.contains('correct-fb')) f.classList.add('show');
+      if (!isCorrect && f.classList.contains('wrong-fb')) f.classList.add('show');
+    });
+  }
+
+  // --- Progress tracking ---
+  function updateProgress() {
+    const all = document.querySelectorAll('.checklist input[type="checkbox"]');
+    const checked = document.querySelectorAll('.checklist input[type="checkbox"]:checked');
+    const pct = all.length ? Math.round((checked.length / all.length) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = pct + '%';
+
+    // Save state
+    const state = {};
+    all.forEach(cb => { state[cb.id] = cb.checked; });
+    try { localStorage.setItem('draaiboek-progress', JSON.stringify(state)); } catch(e) {}
+
+    // Update label styling
+    all.forEach(cb => {
+      const label = cb.parentElement.querySelector('label');
+      if (label) { cb.checked ? label.classList.add('checked') : label.classList.remove('checked'); }
+    });
+  }
+
+  // --- Restore state ---
+  function restoreProgress() {
+    try {
+      const state = JSON.parse(localStorage.getItem('draaiboek-progress'));
+      if (state) {
+        Object.entries(state).forEach(([id, checked]) => {
+          const cb = document.getElementById(id);
+          if (cb) cb.checked = checked;
+        });
+      }
+    } catch(e) {}
+    updateProgress();
+  }
+
+  // --- Init ---
+  document.querySelectorAll('.checklist input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', updateProgress);
+  });
+  restoreProgress();
+</script>
+</body>
+</html>
