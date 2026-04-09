@@ -391,41 +391,53 @@
     </div>
     <div class="block-body">
 
-      <h3>A. Projecten</h3>
-      <p><strong>Projecten</strong> zijn werkruimtes waarin je gesprekken, documenten en instructies bundelt rond een specifiek onderwerp &mdash; een digitaal dossier.</p>
+      <h3>A. Drie manieren om Claude te gebruiken</h3>
+      <p>Claude Desktop heeft drie werkvormen. In deze sessie focussen we op <strong>Chat</strong> en <strong>Cowork</strong>.</p>
+      <table class="data-table">
+        <tr><th></th><th>Chat</th><th>Cowork</th><th>Code</th></tr>
+        <tr><td><strong>Wat</strong></td><td>Gesprek in tekst</td><td>Werkruimte met bestanden</td><td>Terminal voor developers</td></tr>
+        <tr><td><strong>Voor wie</strong></td><td>Iedereen</td><td>Kenniswerkers</td><td>Programmeurs</td></tr>
+        <tr><td><strong>Kan bestanden maken</strong></td><td>Nee</td><td>Ja (Word, Excel, PDF)</td><td>Ja (code)</td></tr>
+        <tr><td><strong>Skills &amp; plugins</strong></td><td>Nee</td><td>Ja</td><td>Ja</td></tr>
+      </table>
+
+      <h3>B. Cowork: je digitale werkplek</h3>
+      <p><strong>Cowork</strong> is de modus waarin Claude actief met je samenwerkt. Claude kan bestanden lezen, maken en bewerken op je computer, en beschikt over gespecialiseerde vaardigheden:</p>
       <ul class="checklist" data-block="4">
-        <li><input type="checkbox" id="c4a"><label for="c4a"><strong>Kennisbank:</strong> upload bestanden (PDF, Word, CSV, tot 30 MB) die Claude meeneemt in elk gesprek binnen dat project</label></li>
-        <li><input type="checkbox" id="c4b"><label for="c4b"><strong>Projectinstructies:</strong> bijv. &ldquo;Je bent een Nederlandse belastingadviseur. Antwoord altijd in het Nederlands en verwijs naar actuele wetgeving.&rdquo;</label></li>
-        <li><input type="checkbox" id="c4c"><label for="c4c"><strong>Oefening:</strong> maak samen een project &ldquo;Box 3 Advies 2026&rdquo;</label></li>
+        <li><input type="checkbox" id="c4a"><label for="c4a">Word, Excel en PDF&rsquo;s aanmaken en bewerken</label></li>
+        <li><input type="checkbox" id="c4b"><label for="c4b">Code uitvoeren en data analyseren</label></li>
+        <li><input type="checkbox" id="c4c"><label for="c4c">Taken plannen en automatiseren (scheduled tasks)</label></li>
+        <li><input type="checkbox" id="c4d"><label for="c4d">Samenwerken met externe tools via connectoren (MCP)</label></li>
       </ul>
 
-      <h3>B. Skills</h3>
-      <p><strong>Skills</strong> zijn herbruikbare instructies die Claude automatisch toepast wanneer een taak eraan matcht &mdash; een soort specialisatie.</p>
+      <h3>C. Projecten, skills en plugins</h3>
+      <p>Binnen Cowork gebruik je drie bouwstenen:</p>
       <ul class="checklist" data-block="4">
-        <li><input type="checkbox" id="c4d"><label for="c4d">Meer dan 1.000 kant-en-klare skills beschikbaar</label></li>
-        <li><input type="checkbox" id="c4e"><label for="c4e">Zelf skills maken met de ingebouwde skill-creator</label></li>
-        <li><input type="checkbox" id="c4f"><label for="c4f">Skills worden gebundeld in <strong>Plugins</strong> &mdash; pakketten voor een specifiek vakgebied</label></li>
+        <li><input type="checkbox" id="c4e"><label for="c4e"><strong>Projecten:</strong> werkruimtes waarin je documenten en instructies bundelt rond een onderwerp &mdash; een digitaal dossier. Bijv. &ldquo;Box 3 Advies 2026&rdquo;</label></li>
+        <li><input type="checkbox" id="c4f"><label for="c4f"><strong>Skills:</strong> gespecialiseerde werkwijzen die Claude automatisch activeert bij een passende taak. Je kunt ze installeren of zelf maken</label></li>
+        <li><input type="checkbox" id="c4g"><label for="c4g"><strong>Plugins:</strong> pakketten die skills, connectoren en tools bundelen voor een vakgebied (bijv. finance, legal)</label></li>
       </ul>
       <div class="example"><strong>Voorbeeld &mdash; aangifte-ib-beleggingen:</strong> Deze skill helpt bij het invullen van Box 3 van de aangifte inkomstenbelasting. Upload een jaaroverzicht van je broker (Saxo, DeGiro, IBKR, Fidelity, Lynx, Binck, etc.) en de skill analyseert de PDF of het Excel-bestand, splitst de rekening in banktegoeden en beleggingen, berekent de peildatumwaarden, en levert een overzicht met precies de velden die je nodig hebt voor de aangifte.</div>
 
-      <h3>C. Cowork</h3>
-      <p><strong>Cowork</strong> is een modus waarmee Claude actief bestanden kan lezen, maken en bewerken op je computer:</p>
+      <h3>D. Oefening: eerste project aanmaken</h3>
       <ul class="checklist" data-block="4">
-        <li><input type="checkbox" id="c4g"><label for="c4g">Word, Excel en PDF's aanmaken en bewerken</label></li>
-        <li><input type="checkbox" id="c4h"><label for="c4h">Code uitvoeren en data analyseren</label></li>
-        <li><input type="checkbox" id="c4i"><label for="c4i">Taken plannen en automatiseren (scheduled tasks)</label></li>
-        <li><input type="checkbox" id="c4j"><label for="c4j">Samenwerken met externe tools via connectoren (MCP)</label></li>
+        <li><input type="checkbox" id="c4h"><label for="c4h">Maak samen een project &ldquo;Box 3 Advies 2026&rdquo;</label></li>
+        <li><input type="checkbox" id="c4i"><label for="c4i"><strong>Kennisbank:</strong> upload bestanden (PDF, Word, CSV, tot 30 MB) die Claude meeneemt in elk gesprek binnen dat project</label></li>
+        <li><input type="checkbox" id="c4j"><label for="c4j"><strong>Projectinstructies:</strong> bijv. &ldquo;Je bent een Nederlandse belastingadviseur. Antwoord altijd in het Nederlands en verwijs naar actuele wetgeving.&rdquo;</label></li>
       </ul>
 
-      <h3>D. Best practices voor prompting</h3>
+      <div class="tip"><strong>Tip &mdash; inspreken:</strong> Je kunt verzoeken aan Claude ook inspreken in plaats van typen. Gebruik de <strong>dicteertoets</strong> op je toetsenbord (microfoon- of Fn-toets) &mdash; je stem wordt direct omgezet naar tekst in het Cowork-gesprek. <em>Let op:</em> de Caps Lock-sneltoets van Claude opent een los Quick Entry-venster, bedoeld voor snelle vragen vanuit andere apps &mdash; niet voor dicteren in een lopend Cowork-gesprek.</div>
+
+      <h3>E. Best practices voor prompting</h3>
       <ul class="checklist" data-block="4">
         <li><input type="checkbox" id="c4k"><label for="c4k"><strong>Wees specifiek:</strong> &ldquo;Bereken de Box 3-heffing voor een alleenstaande met &euro;150.000 spaargeld&rdquo; is beter dan &ldquo;Hoe werkt Box 3?&rdquo;</label></li>
         <li><input type="checkbox" id="c4l"><label for="c4l"><strong>Geef context:</strong> vertel Claude je rol en voor wie het antwoord bedoeld is</label></li>
         <li><input type="checkbox" id="c4m"><label for="c4m"><strong>Vraag om formaat:</strong> &ldquo;Geef het antwoord als tabel met categorie, bedrag en percentage&rdquo;</label></li>
         <li><input type="checkbox" id="c4n"><label for="c4n"><strong>Controleer altijd:</strong> Claude is een hulpmiddel, geen vervanging voor professioneel oordeel</label></li>
       </ul>
+      <div class="tip"><strong>Tip &mdash; prompt shortcuts:</strong> Een handige verzameling kant-en-klare prompt-shortcuts voor Claude vind je op <a href="https://edwintl4e.github.io/Prompt_Shortcuts_for_Claude/" target="_blank">edwintl4e.github.io/Prompt_Shortcuts_for_Claude</a>.</div>
 
-      <h3>E. Betrouwbaarheid & verificatie</h3>
+      <h3>F. Betrouwbaarheid &amp; verificatie</h3>
       <p>Claude kan fouten maken (&ldquo;hallucineren&rdquo;): plausibel klinkende antwoorden die feitelijk onjuist zijn. Risico is het grootst bij cijfers, tarieven en wetsartikelen. Technieken om dit te beperken:</p>
       <ul class="checklist" data-block="4">
         <li><input type="checkbox" id="c4o"><label for="c4o"><strong>Vraag om bronvermelding:</strong> &ldquo;Citeer de wetsartikelen en geef de bron bij elk cijfer.&rdquo; Geen bron = extra controleren.</label></li>
@@ -457,38 +469,44 @@
       <span class="block-chevron">&#9660;</span>
     </div>
     <div class="block-body">
-      <h3>Installatie</h3>
+      <div class="tip"><strong>Let op &mdash; b&egrave;ta:</strong> Claude in Excel is momenteel een <em>research preview</em>. De add-in werkt goed voor dagelijkse taken, maar kan af en toe onverwacht reageren. Anthropic breidt de functionaliteit actief uit.</div>
+
+      <h3>A. Installatie</h3>
       <ul class="checklist" data-block="5">
         <li><input type="checkbox" id="c5a"><label for="c5a">Open Excel (2016+) &rarr; tabblad <strong>Invoegen</strong> &rarr; <strong>Invoegtoepassingen ophalen</strong></label></li>
         <li><input type="checkbox" id="c5b"><label for="c5b">Zoek op &ldquo;Claude by Anthropic&rdquo; en klik <strong>Toevoegen</strong></label></li>
-        <li><input type="checkbox" id="c5c"><label for="c5c">Log in met je Claude-account</label></li>
+        <li><input type="checkbox" id="c5c"><label for="c5c">Log in met je Claude-account &mdash; de add-in opent als zijpaneel in Excel</label></li>
       </ul>
 
-      <h3>Wat kun je ermee?</h3>
+      <h3>B. Waar is Claude in Excel sterk?</h3>
+      <p>De kracht van Claude in Excel zit vooral in het <strong>overbruggen van documenten en spreadsheets</strong>:</p>
       <ul class="checklist" data-block="5">
-        <li><input type="checkbox" id="c5d"><label for="c5d"><strong>Formules in natuurlijke taal:</strong> &ldquo;Maak een VERT.ZOEKEN die het tarief opzoekt bij een inkomen&rdquo;</label></li>
-        <li><input type="checkbox" id="c5e"><label for="c5e"><strong>Data analyseren:</strong> selecteer een bereik, vraag om trends of afwijkingen</label></li>
-        <li><input type="checkbox" id="c5f"><label for="c5f"><strong>Tekst genereren:</strong> samenvattingen, cli&euml;ntnotities, toelichtingen in cellen</label></li>
+        <li><input type="checkbox" id="c5d"><label for="c5d"><strong>Data overnemen uit documenten:</strong> geef Claude een PDF of scan (bijv. een jaaroverzicht van een broker) en laat de gegevens netjes in een bestaand Excel-sjabloon invullen</label></li>
+        <li><input type="checkbox" id="c5e"><label for="c5e"><strong>Formules in natuurlijke taal:</strong> &ldquo;Maak een VERT.ZOEKEN die het tarief opzoekt bij een inkomen&rdquo;</label></li>
+        <li><input type="checkbox" id="c5f"><label for="c5f"><strong>Data analyseren:</strong> selecteer een bereik, vraag om trends of afwijkingen</label></li>
+        <li><input type="checkbox" id="c5f2"><label for="c5f2"><strong>Tekst genereren:</strong> samenvattingen, cli&euml;ntnotities, toelichtingen in cellen</label></li>
       </ul>
+      <div class="example"><strong>Praktijkvoorbeeld &mdash; jaaroverzicht &rarr; Excel:</strong> Je ontvangt een PDF-jaaroverzicht van een broker (Saxo, DeGiro, IBKR). In plaats van handmatig overtypen vraag je Claude in Excel: &ldquo;Neem de aan- en verkopen uit dit PDF-overzicht over en vul ze in op het juiste tabblad van mijn werkblad.&rdquo; Claude leest de PDF, herkent de regels en plaatst de data in de juiste kolommen van je bestaande template.</div>
 
-      <h3>Oefening: probeer het zelf</h3>
-      <p>Maak een werkblad met fictieve vermogens van een cli&euml;nt en laat Claude:</p>
+      <h3>C. Oefening: data uit PDF naar Excel</h3>
+      <p>We proberen dit nu live met een voorbeeld-jaaroverzicht:</p>
       <ul class="checklist" data-block="5">
-        <li><input type="checkbox" id="c5g"><label for="c5g">Een formule schrijven voor het belastbaar rendement (forfaitaire percentages)</label></li>
-        <li><input type="checkbox" id="c5h"><label for="c5h">Een samenvatting genereren van de uitkomsten</label></li>
-        <li><input type="checkbox" id="c5i"><label for="c5i">Een suggestie doen voor belastingoptimalisatie</label></li>
+        <li><input type="checkbox" id="c5g"><label for="c5g">Open het voorbeeld-Excel-sjabloon (of maak een werkblad met kolommen: Datum, Fonds, Aan/Verkoop, Aantal, Koers, Bedrag)</label></li>
+        <li><input type="checkbox" id="c5h"><label for="c5h">Open het Claude-zijpaneel en upload het voorbeeld-PDF-jaaroverzicht</label></li>
+        <li><input type="checkbox" id="c5i"><label for="c5i">Prompt: &ldquo;Vul de transacties uit dit jaaroverzicht in op het actieve werkblad, in de juiste kolommen&rdquo;</label></li>
+        <li><input type="checkbox" id="c5j"><label for="c5j"><strong>Controleer het resultaat:</strong> kloppen de bedragen? Zijn alle regels overgenomen? Zo niet, vraag Claude om correcties</label></li>
       </ul>
 
       <div class="quiz" data-quiz="q5">
         <div class="quiz-label">Quizvraag</div>
-        <p>Waar vind je de Claude-plugin in Excel?</p>
+        <p>Wat is het grootste voordeel van Claude in Excel voor een belastingadviseur?</p>
         <div class="quiz-options">
-          <div class="quiz-option" onclick="checkQuiz(this, false)">Tabblad Gegevens &rarr; Verbindingen</div>
-          <div class="quiz-option" onclick="checkQuiz(this, true)">Tabblad Invoegen &rarr; Invoegtoepassingen ophalen</div>
-          <div class="quiz-option" onclick="checkQuiz(this, false)">Tabblad Controleren &rarr; Add-ins</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Claude vervangt alle handmatige formules</div>
+          <div class="quiz-option" onclick="checkQuiz(this, true)">Claude kan data uit documenten (PDF, scans) overnemen in je bestaande spreadsheet</div>
+          <div class="quiz-option" onclick="checkQuiz(this, false)">Claude maakt altijd foutloze berekeningen</div>
         </div>
-        <div class="quiz-feedback correct-fb">Goed zo! Via Invoegen &rarr; Invoegtoepassingen ophalen vind je de Office Store waar je &ldquo;Claude by Anthropic&rdquo; kunt installeren.</div>
-        <div class="quiz-feedback wrong-fb">De Excel-plugin installeer je via <strong>Invoegen &rarr; Invoegtoepassingen ophalen</strong> in het lint.</div>
+        <div class="quiz-feedback correct-fb">Precies! De kracht zit in het overbruggen van documenten en spreadsheets &mdash; geen handmatig overtypen meer. Controleer het resultaat altijd wel even.</div>
+        <div class="quiz-feedback wrong-fb">Claude in Excel is vooral sterk in het <strong>overnemen van data uit documenten</strong> naar je spreadsheet. Formules en berekeningen zijn handig, maar het echte tijdswinst zit in de data-extractie.</div>
       </div>
     </div>
   </div>
